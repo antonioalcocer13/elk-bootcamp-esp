@@ -70,8 +70,8 @@ public class App {
         System.out.printf("Found entries: %d", entries.size());
         System.out.println();
         entries.forEach(txt -> {
-            System.out.printf("ID: %s\tPlay: %s\tSpeaker: %s\tText: %s", txt.getLineID(),
-                    txt.getPlayName(), txt.getSpeaker(),txt.getTextEntry());
+            System.out.printf("ID: %s\tPlay: %s\tSpeaker: %s\tText: %s\t Score: %s", txt.getLineID(),
+                    txt.getPlayName(), txt.getSpeaker(), txt.getTextEntry(), Float.toString(txt.getScoring()));
             System.out.println();
         });
     }

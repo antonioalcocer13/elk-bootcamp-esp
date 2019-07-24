@@ -7,16 +7,18 @@ public class ShakespeareEntry {
     private final String lineNumber;
     private final String speaker;
     private final String textEntry;
+    private final float scoring;
 
 
     public ShakespeareEntry(int lineID, String playName, int speechNumber,
-                            String lineNumber, String speaker, String textEntry) {
+                            String lineNumber, String speaker, String textEntry, float scoring) {
         this.lineID = lineID;
         this.playName = playName;
         this.speechNumber = speechNumber;
         this.lineNumber = lineNumber;
         this.speaker = speaker;
         this.textEntry = textEntry;
+        this.scoring = scoring;
     }
 
     public int getLineID() {
@@ -41,5 +43,9 @@ public class ShakespeareEntry {
 
     public String getTextEntry() {
         return textEntry;
+    }
+
+    public float getScoring() {
+        return scoring;
     }
 }

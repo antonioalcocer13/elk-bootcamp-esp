@@ -24,7 +24,7 @@ final class Practica4AController extends ShakespeareController {
         sourceBuilder.query(QueryBuilders.disMaxQuery()
                 .add(QueryBuilders.matchQuery(ShakespeareController.PLAY_NAME_FIELD, text))
                 .add(QueryBuilders.matchQuery(ShakespeareController.SPEAKER_FIELD, text))
-                .add(QueryBuilders.matchQuery(ShakespeareController.TEXT_ENTRY_FIELD, text))
+                .add(QueryBuilders.matchQuery(ShakespeareController.TEXT_ENTRY_FIELD , text))
                 .tieBreaker(0.7f)).size(100)
 
         ;

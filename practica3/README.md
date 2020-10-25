@@ -144,7 +144,7 @@ import java.util.Map;
 
 Una vez terminado el ejercicio vamos a ver cómo funciona para ello tenemos que seguir los siguientes pasos.
 
-1. Arrancar el `docker-compose` con el comando `docker-compose up -d`
+1. Arrancar Elastic Search
 2. Ejecutar el comando `mvn clean install`.
 3. Ejecutar el comando `mvn exec:java -Dexec.mainClass="com.alvaroagea.elk.practica3.App"`
 4. **Tarea:** Juega con la aplicación y utiliza otros tipos de búsqueda.

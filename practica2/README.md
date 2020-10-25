@@ -6,42 +6,46 @@ El objetivo de esta práctica es aprender a utilizar los comandos básicos de El
 
 La idea de este ejercicio es que conozcamos cómo extraer los principales parámetros de un cluster, para conocer su estado.
 
-1. Lo primero que vamos es arrancar ejecutar el comando `docker compose up` en la carpeta del ejercicio.
+1. Lo primero que vamos es arrancar todo:
+```bash
+$ /opt/ES/elastic/bin/elasticsearch -d
+$ /opt/ES/kibana/bin/kibana
+```
 2. El comando más básico para saber cual es el estado del cluster es el comando status.
 
 ```bash
-curl -X GET "localhost:9200/_cluster/health?pretty"
+$ curl -X GET "localhost:9200/_cluster/health?pretty"
 ```
 
 3. Este comando devuelve la información general de como se encuentra el cluster.
 4. Para conseguir toda la información relacionada con el cluster, podemos ejecutar la siguiente instrucción.
 
 ```bash
-curl -X GET "localhost:9200/_cluster/state?pretty"
+$ curl -X GET "localhost:9200/_cluster/state?pretty"
 ```
 
 5. Esto devuelve una  gran cantidad de información podemos filtrarla indicando las métricas que queremos captura.
 
 ```bash
-curl -X GET "localhost:9200/_cluster/state/metadata,routing_table/?pretty"
+$ curl -X GET "localhost:9200/_cluster/state/metadata,routing_table/?pretty"
 ```
 
 5. Para recuperar estadísticas del uso del cluster podemos ejecutar la siguiente petición.
 
 ```bash
-curl -X GET "localhost:9200/_cluster/stats?human&pretty"
+$ curl -X GET "localhost:9200/_cluster/stats?human&pretty"
 ```
 
 6. Para recuperar la configuración del cluster podemos ejecutar este comando.
 
 ```bash
-curl -X GET "localhost:9200/_cluster/settings"
+$ curl -X GET "localhost:9200/_cluster/settings"
 ```
 
 7. Listando los indices.
 
 ```bash
-curl -X GET "localhost:9200/_cat/indices?v"
+$ curl -X GET "localhost:9200/_cat/indices?v"
 ```
 
 Podemos saber más información de los nodos, del estado de los share y demás  partes del cluster, para ello podemos ir a la API de ElasticSearch.
@@ -54,18 +58,21 @@ En este ejercicio vamos a repasar las operaciones de creación, lectura, actuali
 
 Lo primero vamos a ver cómo podemos crear un indice en ElasticSearch.
 
-1. Lo primero que vamos es chequear si la composición sigue levantada con el comando `docker-compose ps` . Si el servicio esta parado volvemos a hacer `docker-compose up`.
+1. Vamos a comprobar si los servicios siguen levantados:
+```bash
+$ jps
+```
 
 2. Vamos a crear un indice con el comando básico.
 
 ```bash
-curl -X PUT "localhost:9200/twitter"
+$ curl -X PUT "localhost:9200/twitter"
 ```
 
 3. Este comando utiliza el numero de Shards y réplicas que asigna ElasticSearch por defecto. Si queremos crear un indicio con otro número de Shards o réplicas debemos especificarlo.
 
 ```bash
-curl -X PUT "localhost:9200/twitter-2" -H 'Content-Type: application/json' -d'
+$ curl -X PUT "localhost:9200/twitter-2" -H 'Content-Type: application/json' -d'
 {
     "settings" : {
         "number_of_shards" : 3,
@@ -77,7 +84,7 @@ curl -X PUT "localhost:9200/twitter-2" -H 'Content-Type: application/json' -d'
 4. Y si queremos especificar un Mapping Type especifico.
 
 ```bash
-curl -X PUT "localhost:9200/test" -H 'Content-Type: application/json' -d'
+$ curl -X PUT "localhost:9200/test" -H 'Content-Type: application/json' -d'
 {
     "settings" : {
         "number_of_shards" : 1
@@ -93,19 +100,19 @@ curl -X PUT "localhost:9200/test" -H 'Content-Type: application/json' -d'
 5. Este comando deberemos meterlo en nuestro script de arranque, pero necesitaré un método para comprobar si  un indice existe o no.
 
 ```bash
-curl --HEAD "localhost:9200/twitter"
+$ curl --HEAD "localhost:9200/twitter"
 ```
 
 6. Si listamos los indices podemos ver todos los que ahora mismos existen en el sistema.
 
 ```bash
-curl -X GET "localhost:9200/_cat/indices?v"
+$ curl -X GET "localhost:9200/_cat/indices?v"
 ```
 
 7. Para borrar un indice podemos ejecutar el siguiente comando.
 
 ```bash
-curl -X DELETE "localhost:9200/twitter"
+$ curl -X DELETE "localhost:9200/twitter"
 ```
 
 8. **Tarea:** Borra todo los indices que hemos creado en este apartado.
@@ -117,7 +124,7 @@ En este apartado vamos a indexar algunos momento y probaremos como podemos  crea
 1. Vamos a crear un documento.
 
 ```bash
-curl -X PUT "localhost:9200/twitter/1" -H 'Content-Type: application/json' -d'
+$ curl -X PUT "localhost:9200/twitter/1" -H 'Content-Type: application/json' -d'
 {
     "user" : "kimchy",
     "post_date" : "2009-11-15T14:12:12",
@@ -129,7 +136,7 @@ curl -X PUT "localhost:9200/twitter/1" -H 'Content-Type: application/json' -d'
 3. Vale pero hemos creado un documento donde hemos puesto el ID de forma explicita, ahora vamos a probar esto.
 
 ```bash
-curl -X POST "localhost:9200/twitter/" -H 'Content-Type: application/json' -d'
+$ curl -X POST "localhost:9200/twitter/" -H 'Content-Type: application/json' -d'
 {
     "user" : "kimchy",
     "post_date" : "2009-11-15T14:12:12",
@@ -141,7 +148,7 @@ curl -X POST "localhost:9200/twitter/" -H 'Content-Type: application/json' -d'
 5. Por último vamos a borrar el indice twitter.
 
 ```bash
-curl -X DELETE "localhost:9200/twitter"
+$ curl -X DELETE "localhost:9200/twitter"
 ```
 
 4. **Pregunta:** ¿Cómo se almacenan los documentos?
@@ -153,7 +160,7 @@ Vamos a recuperar los documentos a través de su ID por lo que no haremos consul
 1. Vamos a crear un documento.
 
 ```bash
-curl -X PUT "localhost:9200/twitter/0" -H 'Content-Type: application/json' -d'
+$ curl -X PUT "localhost:9200/twitter/0" -H 'Content-Type: application/json' -d'
 {
     "user" : "kimchy",
     "post_date" : "2009-11-15T14:12:12",
@@ -164,13 +171,13 @@ curl -X PUT "localhost:9200/twitter/0" -H 'Content-Type: application/json' -d'
 2. Primero vamos a chequear que nuestro documento exista.
 
 ```bash
-curl --HEAD "localhost:9200/twitter/0"
+$ curl --HEAD "localhost:9200/twitter/0"
 ```
 
 3. Para recuperarlo por su ID vamos a utilizar el siguiente comando.
 
 ```bash
-curl -X GET "localhost:9200/twitter/0?pretty"
+$ curl -X GET "localhost:9200/twitter/0?pretty"
 ```
 
 4. Espera aquí hay más cosas de las que hemos añadido. ¿Para qué sirven todos esto datos?
@@ -183,13 +190,13 @@ Borrar documentos es sencillo en ElasticSearch y no es necesario tener que borra
 1. Esto es muy sencillo solo tenemos que lanzar este comando y borramos el documento seleccionado.
 
 ```bash
-curl -X DELETE "localhost:9200/twitter/0"
+$ curl -X DELETE "localhost:9200/twitter/0"
 ```
 
 2. Pero sí queremos borrar varios documento y pero no queremos borrar el indice, debemos utilizar el borrado por query.
 
 ```bash
-curl -X POST "localhost:9200/twitter/_delete_by_query" -H 'Content-Type: application/json' -d'
+$ curl -X POST "localhost:9200/twitter/_delete_by_query" -H 'Content-Type: application/json' -d'
 {
   "query": { 
     "match_all": {}
@@ -226,13 +233,13 @@ $ curl -H "Content-Type: application/json" -XPOST "localhost:9200/bank/_doc/_bul
 3. Otra forma de saber como son los datos que tenemos en recuperando el Mapping Type.
 
 ```bash
-curl -X GET "localhost:9200/bank/_mapping/"
+$ curl -X GET "localhost:9200/bank/_mapping/"
 ```
 
 4. Ahora vamos a hacer la query sencilla vamos a contar cuantos registros hay.
 
 ```bash
-curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
+$ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 {
     "query": {
         "match_all": {}
@@ -243,7 +250,7 @@ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 5. Pregunta: ¿Cuántas mujeres hay en la empresa?
 
 ```bash
-curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
+$ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 {
     "query": {
     	"match": {"gender":"F"}
@@ -254,7 +261,7 @@ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 6. Pregunta: ¿Cuántas mujeres viven en MA or WA?
 
 ```bash
-curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
+$ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 {
     "query": {
     	"bool": {
@@ -274,7 +281,7 @@ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 7. Pregunta: ¿Cuántos hombres tiene un saldo mayor  que 30000$?
 
 ```bash
-curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
+$ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 {
     "query": {
     	"bool": {
@@ -299,7 +306,7 @@ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 8. Pregunta: ¿Podemos borrar sólo los hombres por debajo de los 5000$?
 
 ```bash
-curl -X POST "localhost:9200/bank/_delete_by_query" -H 'Content-Type: application/json' -d'
+$ curl -X POST "localhost:9200/bank/_delete_by_query" -H 'Content-Type: application/json' -d'
 {
     "query": {
     	"bool": {
@@ -323,7 +330,7 @@ curl -X POST "localhost:9200/bank/_delete_by_query" -H 'Content-Type: applicatio
 9. Pregunta: ¿Cuántas mujeres tienes más de 30 años?
 
 ```bash
-curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
+$ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 {
     "query": {
     	"bool": {
@@ -342,5 +349,354 @@ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
 	}    
 }'
 ```
+##Ejercicio 4. Practicando con ES y Kibana.
+En esta ocasión en lugar de utilizar un terminal, vamos a hacer uso de kibana. Pero por ahora solo lo utilizaremos para poder realizar consultas de una forma "un poco más amigable".
+1. Nos aseguramos que estén levantados los servicios.
 
+```bash
+$ jps
+```
 
+2. Nos conectamos a un navegador y nos conectamos a la URL:
+http://localhost:5601
+
+3. las consultas las realizaremos en Kibana en el partado de DEV_TOOLS
+4. Vamos a hacer unas consultas similares a las que realizabamos anteriormente con curl:
+```rest
+GET _cat/indices?v
+GET _cat/health?v
+GET _cat/nodes?v
+GET _cat/indices?v
+PUT customer?pretty
+GET _cat/indices?v
+```
+El primer comando me crea un índice llamado “customer”, lo de pretty es para decirle que vamos a interactuar con él por medio de JSON, es decir, que nos devuelva los datos en formato JSON.
+Crear:
+```rest
+PUT customer/external/1
+{ 
+"name": "John Doe" 
+}
+```
+Borrar
+```rest
+DELETE customer?pretty
+```
+
+```rest
+PUT customer/_create/1?pretty
+{ 
+	"name": "John Doe" 
+}
+```
+Recuperar
+```rest
+GET customer/_doc/1/?pretty
+```
+Actualizar
+```rest
+POST customer/_update/1
+{ 
+   "doc" : {
+        "name": "Jane Doe" 
+    }
+```
+Actualizar con más campos:
+```rest
+POST customer/_update/2/
+{ 
+	"doc": { "name": "Miguel Perez", "age": 20 } 
+}
+```
+```rest
+DELETE customer?pretty'
+```
+
+###Trabajando con más datos.
+1. Con el ejemplo account2.json lo introducimos en la pestaña de ES de MachineLearning. inddicando que el nombre del índice sea bank. El formato de los datos será:
+```json
+{ 
+"account_number": 0, 
+"balance": 16623, 
+"firstname": "Bradshaw", 
+"lastname": "Mckenzie", 
+"age": 29, 
+"gender": "F", 
+"address": "244 Columbus Place",
+"employer": "Euron", 
+"email": "bradshawmckenzie@euron.com", 
+"city": "Hobucken", 
+"state": "CO" 
+} 
+```
+2. Hacemos una consulta sobre todos los resultados: 
+```jql
+SELECT * FROM bank;
+```
+Pero con el lenguaje de ES:
+```rest
+GET bank/_search?q=*&pretty
+```
+3. Siempre por defecto salen 10 resultados, aunque podemos limitar el numero de resultados con el atributo size
+```rest
+GET bank/_search?q=*&size=3&pretty
+```
+4. Y podemos hacer búsquedas simples:
+```rest
+GET bank/_search?q=*&sort=account_number:asc&pretty
+```
+La misma query la podemos hacer con:
+```rest
+GET bank/_search?pretty
+{
+    "query": { 
+        "match_all": 
+            {} 
+    },
+    "sort": [
+        { 
+            "account_number": "asc" 
+        }
+    ]
+}
+```
+###Trabajando con búsquedas más complejas.
+1. resultados desde el índice 10 los 20 siguientes:
+```rest
+POST bank/_search?pretty
+{
+    "query": { 
+        "match_all": {} 
+    },
+    "from": 10,
+    "size": 10
+}
+```
+2. resultados qus solo me devuelve dos campos:
+```rest
+POST bank/_search?pretty
+{ 
+	"query": { "match_all": {} }, 
+	"_source": ["account_number", "balance"] 
+}
+```
+3. resultados qus me devuelve el que tiene el account_number = 20:
+```rest
+POST bank/_search?pretty
+{
+	"query": { "match": { "account_number": 20 } }
+}
+```
+4. resultados con el documento que tenga la dirección con mill:
+```rest
+POST bank/_search?pretty
+{ 
+	"query": { "match": { "address": "mill" } } 
+}
+```
+
+No aperece nada, sin embargo si buscamos: 666 Miller Place si que aperece. Si observamos   el mapping, veremos que por defecto nos lo ha puesto que el campo address es de tipo keyword. Lo que significa que debe de coincidir exactamente. Por lo que deberemos de cambiar el mapping. Borramos el indice y generamos el mapping antes de insertar los datos.
+```rest
+POST bank/_search?pretty
+{ 
+	"query": { "match": { "address": "666 Miller Place" } } 
+}
+```
+5. Borramos el indice para actualizar el mapping correctamente:
+```rest
+DELETE bank
+```
+6. al crear el indice en machineLearning le ponemos el mapping siguiente:
+```json
+{
+      "account_number": {
+        "type": "long"
+      },
+      "address": {
+        "type": "text",
+        "fields": {
+          "keyword": { 
+            			"type":  "keyword"
+         		 }
+        	}
+     },
+      "age": {
+        "type": "long"
+      },
+      "balance": {
+        "type": "long"
+      },
+      "city": {
+        "type": "text",
+        "fields": {
+          "keyword": { 
+            			"type":  "keyword"
+         		 }
+        	}
+      },
+      "email": {
+        "type": "text",
+         "fields": {
+          "keyword": { 
+            			"type":  "keyword"
+         		 }
+        	}
+      },
+      "employer": {
+        "type": "text",
+         "fields": {
+          "keyword": { 
+            			"type":  "keyword"
+         		 }
+        	}
+      },
+      "firstname": {
+        "type": "keyword"
+      },
+      "gender": {
+        "type": "keyword"
+      },
+      "lastname": {
+        "type": "keyword"
+      },
+      "state": {
+        "type": "keyword"
+      }
+    }
+```
+7. Volvemos a hacer las consultas de antes.
+8. Para hacer que se cumpla explícitamente lo que búscamos, iremos al campo .keyword:
+```rest
+POST bank/_search?pretty
+{ 
+	"query": { "match": { "address.keyword": "666 Miller Place" } } 
+}
+```
+y sino, podremos buscar por tipo text y que me devuelva resultados similares:
+```rest
+POST bank/_search?pretty
+{ 
+	"query": { "match": { "address": "666 Miller Place" } } 
+}
+```
+***¿Por qué hay diferencias entre los dos resultados?***
+
+9. resultados que tenga la dirección con mill O lane
+```rest
+POST bank/_search?pretty
+{ 
+	"query": { "match": { "address": "mill lane" } } 
+}
+```
+10. resultados que tenga la dirección con la frase “mill lane”:
+```rest
+POST bank/_search?pretty
+{ 
+	"query": { "match_phrase": { "address": "mill lane" } } 
+}
+```
+Como veis, cuando vamos por text, no distingue entre mayúsculas ni minúsculas.
+
+11. resultados que tenga la dirección con el dato “mill” ***Y*** “lane” ***SOLO***:
+```rest
+POST bank/_search?pretty
+{ 
+	"query": 
+		{ "bool": { 
+			"must": [ 
+				{ "match": { "address": "mill" } }, 
+				{ "match": { "address": "lane" } } 
+			]
+		 } 
+	} 
+}
+```
+12. resultados que tenga la dirección con el dato “mill” ***O*** “lane” ***SOLO***:
+```rest
+POST bank/_search?pretty
+{ 
+	"query": 
+		{ "bool": { 
+			"should": [ 
+				{ "match": { "address": "mill" } }, 
+				{ "match": { "address": "lane" } } 
+			]
+		 } 
+	} 
+}
+```
+13. resultados que NO tenga la dirección con el dato “mill” NI “lane”
+```rest
+POST bank/_search?pretty
+{ 
+	"query": 
+		{ "bool": { 
+			"must_not": [ 
+				{ "match": { "address": "mill" } }, 
+				{ "match": { "address": "lane" } } 
+			]
+		 } 
+	} 
+}
+```
+14. resultados que tengan 40 anos y que no vivan en el condado ID (Idaho):
+```rest
+POST bank/_search?pretty
+{
+    "query": {
+        "bool": {
+            "must": [
+                { "match": { "age": "40" } }
+            ],
+            "must_not": [
+                { "match": { "state": "ID" } }
+            ]
+        }
+    }
+}
+```
+###Trabajando con filtros.
+1. resultados que tienen entre 20.000 y 30.000 en su cuenta:
+```rest
+POST bank/_search?pretty
+{ 
+	"query": { 
+		"bool": { 
+			"must": { "match_all": {} }, 
+			"filter": { 
+				"range": { 
+					"balance": { 
+						"gte": 20000, 
+						"lte": 30000 }
+					} 
+				} 
+			} 
+		} 
+}
+```
+###Trabajando con agregaciones.
+1. Resultados agregados por estado:
+```rest
+POST bank/_search?pretty
+{
+    "size": 0,
+    "aggs": {
+        "group_by_state": {
+            "terms": {
+                "field": "state"
+            }
+        }
+    }
+}
+```
+Similar a la consulta en SQL:
+```jql
+SELECT state, COUNT(*) FROM bank GROUP BY state ORDER BY COUNT(*) DESC
+```
+
+#Ejercicios propuestos.
+1. Pregunta: ¿Cuántas mujeres hay en la empresa?
+2. Pregunta: ¿Cuántas mujeres viven en MA or WA?
+3. Pregunta: ¿Cuántos hombres tiene un saldo mayor que 30000$?
+4. Pregunta: ¿Podemos borrar sólo los hombres por debajo de los 5000$?
+5. Pregunta: ¿Cuántas mujeres tienes más de 30 años?

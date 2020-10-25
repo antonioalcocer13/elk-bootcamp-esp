@@ -205,7 +205,7 @@ $ curl -X POST "localhost:9200/twitter/_delete_by_query" -H 'Content-Type: appli
 
 ```
 
-##Ejercicio 3. Probando el lenguaje de consultas.
+## Ejercicio 3. Probando el lenguaje de consultas.
 
 En este ejercicio vamos a aprender cómo ejecutar diferentes tipos de consulta utilizando el Query DSL.
 
@@ -349,7 +349,7 @@ $ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -
 	}    
 }'
 ```
-##Ejercicio 4. Practicando con ES y Kibana.
+## Ejercicio 4. Practicando con ES y Kibana.
 En esta ocasión en lugar de utilizar un terminal, vamos a hacer uso de kibana. Pero por ahora solo lo utilizaremos para poder realizar consultas de una forma "un poco más amigable".
 1. Nos aseguramos que estén levantados los servicios.
 
@@ -412,7 +412,7 @@ POST customer/_update/2/
 DELETE customer?pretty'
 ```
 
-###Trabajando con más datos.
+### Trabajando con más datos.
 1. Con el ejemplo account2.json lo introducimos en la pestaña de ES de MachineLearning. inddicando que el nombre del índice sea bank. El formato de los datos será:
 ```json
 { 
@@ -460,7 +460,7 @@ GET bank/_search?pretty
     ]
 }
 ```
-###Trabajando con búsquedas más complejas.
+### Trabajando con búsquedas más complejas.
 1. resultados desde el índice 10 los 20 siguientes:
 ```rest
 POST bank/_search?pretty
@@ -655,7 +655,7 @@ POST bank/_search?pretty
     }
 }
 ```
-###Trabajando con filtros.
+### Trabajando con filtros.
 1. resultados que tienen entre 20.000 y 30.000 en su cuenta:
 ```rest
 POST bank/_search?pretty
@@ -674,7 +674,7 @@ POST bank/_search?pretty
 		} 
 }
 ```
-###Trabajando con agregaciones.
+### Trabajando con agregaciones.
 1. Resultados agregados por estado:
 ```rest
 POST bank/_search?pretty
@@ -694,9 +694,10 @@ Similar a la consulta en SQL:
 SELECT state, COUNT(*) FROM bank GROUP BY state ORDER BY COUNT(*) DESC
 ```
 
-#Ejercicios propuestos.
+# Ejercicios propuestos.
 1. Pregunta: ¿Cuántas mujeres hay en la empresa?
 2. Pregunta: ¿Cuántas mujeres viven en MA or WA?
 3. Pregunta: ¿Cuántos hombres tiene un saldo mayor que 30000$?
 4. Pregunta: ¿Podemos borrar sólo los hombres por debajo de los 5000$?
 5. Pregunta: ¿Cuántas mujeres tienes más de 30 años?
+## 

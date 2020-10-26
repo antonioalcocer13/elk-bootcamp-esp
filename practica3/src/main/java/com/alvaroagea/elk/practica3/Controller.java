@@ -30,7 +30,7 @@ public abstract class Controller {
 
 
     final RestHighLevelClient client = new RestHighLevelClient(
-            RestClient.builder(new HttpHost("localhost", 9200, "http")));
+            RestClient.builder(new HttpHost("localhost", 9201, "http")));
 
 
     /**

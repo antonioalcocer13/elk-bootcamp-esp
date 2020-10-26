@@ -19,7 +19,7 @@ public class ControllerTest {
     public static void tearUp() throws IOException, InterruptedException {
         controller.init();
         Message msg1 = new Message(Instant.now(), "aagea", "esto es una prueba");
-        Message msg2 = new Message(Instant.now(), "pepe", "cambiemos de tema");
+        Message msg2 = new Message(Instant.now(), "aalcocer", "cambiemos de tema");
 
         controller.index(msg1);
         controller.index(msg2);
@@ -55,7 +55,7 @@ public class ControllerTest {
     @Test
     public void wildcardTest() throws IOException {
 
-        List<Message> messages = controller.searchAuthor("pe*");
+        List<Message> messages = controller.searchAuthor("aal*");
 
         Assert.assertNotNull(messages);
         Assert.assertEquals(1, messages.size());

@@ -7,6 +7,7 @@ En esta práctica vamos a probar cómo se usa la librería de ElasticSearch con 
 En este apartado vamos a añadir el proyecto a IntelliJ para que sea mucho más fácil trabajar con el código Java.
 
 1. Lo primero que vamos a hacer es chequear que el entorno funciona. Para ello ejecutamos `mvn clean install` desde la carpeta de la práctica. Deberán fallar los tests.
+Asegurándonos que el ES este levantado
 2. Este comando se descargará las dependencias y compilara el proyecto, el resultado debería ser correcto.
 3. Ahora para limpiar la carpeta ejecutamos `mvn clean`.
 4. Ahora abrimos IntelliJ,
@@ -45,7 +46,7 @@ En este apartado vamos a repasar la dos clases que están incluidas en el reposi
 2. La clase `controller` es una clase Abstracta que contiene las llamadas de ElasticSearch.
 3. La clase `Practica3Controller` es la clase que vamos a implementar.
 4. Esta clase tiene una instancia del cliente de alto nivel.
-5. **Tarea:** Revisa los métodos con los que cuenta el cliente rest en esta [URL](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/6.4/java-rest-high-getting-started.html)
+5. **Tarea:** Revisa los métodos con los que cuenta el cliente rest en esta [URL](https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-getting-started.html)
 
 ## Ejercicio 4. Indexando los elementos
 

@@ -5,10 +5,19 @@ En esta práctica vamos a probar cómo se usa la librería de ElasticSearch con 
 ## Ejercicio 1. Añadiendo el proyecto
 
 En este apartado vamos a añadir el proyecto a IntelliJ para que sea mucho más fácil trabajar con el código Java.
+0. Nos descargamos el proyecto:
+```bash
+$ cd 
+$ cd elk-bootcamp
+$ git clone https://github.com/antonioalcocer13/elk-bootcamp-esp
+$ cd elk-bootcamp-esp
+$ git checkout python
+$ cd practica3
+```
 
 1. Lo primero que vamos a hacer es chequear que el entorno funciona. Para ello ejecutamos `mvn clean install` desde la carpeta de la práctica. Deberán fallar los tests.
 Asegurándonos que el ES este levantado
-2. Este comando se descargará las dependencias y compilara el proyecto, el resultado debería ser correcto.
+2. Este comando se descargará las dependencias y compilara el proyecto, el resultado debería ser de fallo en los test.
 3. Ahora para limpiar la carpeta ejecutamos `mvn clean`.
 4. Ahora abrimos IntelliJ,
 5. Pulsamos en `Import project`. 

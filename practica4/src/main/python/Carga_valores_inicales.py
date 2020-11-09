@@ -54,7 +54,7 @@ logger = logging.getLogger(__name__)
 
 logger.info("Inicio de la ejecución del cargador de ejemplo")
 
-logger.debug("Controladores creados")
+logger.info("Controladores creados")
 
 # le restamos a la fecha actual 40 minutos
 initTime = int(time.time()-2400)
@@ -104,8 +104,8 @@ ev = Event.Event("A","3", initTime+2340, initTime+2400)
 eventos.append(ev)
 
 ElasticController.indexEvent(eventos)
-logger.debug("Carga de los datos")
+logger.info("Carga de los datos")
 
 
 
-Probar la carga de los datos en ES y modificar después la parte del .md y borrar entonces lo de java.
+# Probar la carga de los datos en ES y modificar después la parte del .md y borrar entonces lo de java.

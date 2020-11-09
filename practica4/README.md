@@ -4,11 +4,71 @@ En esta práctica, vamos a probar a crear term-level queries o filtros para mane
 
 ## Ejercicio 1. Insertando documentos en ES
 
-La función `last(String id, List<String> tags, int limit, Instant before)` devuelve los últimos n elementos de un timeline concreto que contengan algunos de los tags asignado y que estén antes de una fecha dada. 
+1. Para insertar eventos en ES lo vamos a hacer con un programa de python:
 
-Para poder resolver este método vamos a utilizar una función boolean query. La boolean query contiene tres tipos de busqueda:
+```bash
+$ cd 
+$ cd elk-bootcamp-esp
+$ cd elk-bootcamp-esp
+$ cd practica4/src/main/python
+$ sudo pip3 install elasticsearch
+$ python3.8 Carga_valores_iniciales.py
 
-## Ejercicio 2. Consultando en ES mediante funciones boleanas:
+```
+2. Y nos aseguramos que han sido insertados los datos en ElasticSearch por medio de Kibana en el indice eventos
+
+3. Ahora buscaremos la estructura de los documentos insertados con kibana.
+4. Podremos observar como el mapping de los campos T1 y T2 son de tipo date--> epoch_second.
+5. Hacemos una búsqueda con un margen de tiempo, cogiendo un tiempo entre uno de los valores que aparecen en uno de los valores T1
+:
+```http
+POST eventos/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "T1": {
+              "gte": 1604920489,
+              "lte": 1604920491,
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+```
+6. Realizamos la misma búsqueda pero con una fecha con formato humano
+
+```http
+POST eventos/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "T1": {
+              "gte": "2020/11/09 11:13:00",
+              "lte": "2020/11/09 11:16:00",
+              "format": "yyyy/MM/dd HH:mm:ss"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+```
+7. **¿Por qué podemos realizar esta consulta, si los datos no están almacenados en este formato nuevo?**
+
+## Ejercicio 2. Entender el codigo de python y los métodos que contiene
+
+## Ejercicio 3. Consultando en ES mediante funciones boleanas:
 
 Queremos crear una consulta que nos devuelva los últimos n elementos de un timeline concreto que contengan algunos de los tags asignado y que estén antes de una fecha dada. 
 
@@ -17,87 +77,132 @@ Para poder resolver esta consulta vamos a utilizar una función boolean query. L
 + **Should queries.** Son filtros que el documento **DEBERIA** cumplir. Para hacer que al menos una de consulta sea obligatoria tendremos que modificar el parámetro `minimumShouldMatch`.
 + **Must not queries.** Son filtros que el documento **NO DEBE** cumplir, los resultado que pasen este filtro serán excluidos de los resultados. 
 
-1. Lo primero que vamos a hacer es crearlo el objeto resulta que vamos a devolver en caso de que todo vaya bien.
 
-```java
-List<Event> result = new LinkedList<>();
-```
+2. Una vez hecho esto nos crearemos una instancia del Bool Query Builder y añadiremos el primer filtro **must** por event_id.
 
-2. Una vez hecho esto nos crearemos una instancia del Bool Query Builder y añadiremos el primer filtro **must**.
-
-```java
-BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery()
-	.must(QueryBuilders.termQuery(EventController.ID_FIELD, id));
+```http
+POST eventos/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {
+          "Event_ID": "A"
+        }}
+      ]
+    }
+  }
+}
 ```
 
 3. Por cada uno de los tags añadiremos un filtro **should**.
 
-```java
-for (String t : tags) {
-	boolQueryBuilder = boolQueryBuilder.should(
-  QueryBuilders.termQuery(EventController.TAG_FIELD, t));
+```http
+POST eventos/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {
+          "Event_ID": "A"
+        }
+        }
+      ],
+      "should":[
+        {"match": {
+          "Tag": "1"
+          }
+        },
+        {"match": {
+          "Tag": "2"
+          }
+        }
+      ]
+          
+    }
+  }
 }
 
 ```
 
-4. En caso de que el parámetro Before sea distinto de null, debemos otro filtro **must**.
+4. Y los ordenaremos por T1.
 
-```java
-if (before != null){
-	boolQueryBuilder = boolQueryBuilder.must(
-	QueryBuilders.rangeQuery(EventController.T2_FIELD).to(before));
+```bash
+POST eventos/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {"match": {
+          "Event_ID": "A"
+        }
+        },
+        {"match": {
+          "Event_ID": "B"
+        }
+        }
+      ]
+    }
+  },
+  "size": 20,
+  "sort": [
+    {
+      "T1": {
+        "order": "desc"
+      }
+    }
+  ]
 }
 ```
 
-5. Modificamos el parámetro `minimumShouldMatch` para que el evento al menos contenga un tag.
-
-```java
-boolQueryBuilder=boolQueryBuilder.minimumShouldMatch(1);
+5. Modificamos el parámetro `minimumShouldMatch` para que el evento al menos contenga un tag., porque si no vemos que siguen apareciendo resultados del tag 3
+```http
+POST eventos/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {
+          "Event_ID": "A"
+        }
+        }
+      ],
+      "should":[
+        {"match": {
+          "Tag": "1"
+          }
+        },
+        {"match": {
+          "Tag": "2"
+          }
+        }
+      ], "minimum_should_match": 1
+          
+    }
+  },
+  "size": 20,
+  "sort": [
+    {
+      "T1": {
+        "order": "desc"
+      }
+    }
+  ]
+}
 ```
 
-6. Creamos la llamada al API.
 
-```java
-SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-sourceBuilder.query(boolQueryBuilder)
-             .sort(EventController.T2_FIELD, SortOrder.DESC).size(limit);
-SearchRequest searchRequest = new SearchRequest(EventController.EVENT_INDEX)
-                .source(sourceBuilder);
-```
 
 7. Fíjate que hemos ordenado la consulta en orden descendente, sin embargo queremos que el orden sea siempre ascendente ¿por qué hemos hecho esto?
-8. Por último, recorremos el ResultSet y creamos la lista de eventos.
-
-```java
-try {
-  SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
-  response.getHits().iterator().forEachRemaining(it -> {
-    Map<String, Object> source = it.getSourceAsMap();
-    result.add(
-      new Event(
-        source.get(EventController.ID_FIELD).toString(),
-        source.get(EventController.TAG_FIELD).toString(),
-        Instant.parse(source.get(EventController.T1_FIELD).toString()),
-        Instant.parse(source.get(EventController.T2_FIELD).toString())
-      )
-    );
-  });
-} catch (IOException e) {
-	return Optional.empty();
-}
-Collections.reverse(result);
-return Optional.of(result);
-```
-
-9. Arrancamos ElasticSearch utilizando el comando `docker-compose up`
-10. Probamos de nuevo los test, veremos cómo algunos de ellos ya pasan.
-11. Tarea: ¿porque hacemos un reverse de la lista?
 
 ## Ejercicio 4. Pasando los tests
 
-Muy bien ya hemos hecho un ejemplo, ahora el resto de la practica es rellenar el resto de métodos, y conseguir que los tests pasen. Recordad los tipos diferentes de filtros y cómo debemos ordenar los resultados para filtrar.
+1. Consulta que obtenga los ultimos 4 resultados ordenados del event_id= A
+2. Consulta que obtenga los ultimos 10 resuldados ordenados por T2 que tengan tag 1 ó 3 y pertenezcan al evento_id = B
+3. Consulta que obtenga los primeros 5 resultados ordenados por T1 que tengan un event_id = C y con tag = 2
+4. Consulta de los resultados entre dos tiempos diferenciados entre 6 minutos.
+5. Consulta de los resultados que no sean del tipo event_id = C
 
-
-
+## Ejercicio5. Implementar en python en Carga_valores_iniciales alguna consulta usando los metodos del ES_Controller.
  
 

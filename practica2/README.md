@@ -373,7 +373,7 @@ GET _cat/indices?v
 El primer comando me crea un índice llamado “customer”, lo de pretty es para decirle que vamos a interactuar con él por medio de JSON, es decir, que nos devuelva los datos en formato JSON.
 Crear:
 ```rest
-PUT customer/external/1
+POST customer/external/1
 { 
 "name": "John Doe" 
 }
@@ -400,8 +400,17 @@ POST customer/_update/1
    "doc" : {
         "name": "Jane Doe" 
     }
+}
 ```
 Actualizar con más campos:
+```rest
+POST customer/_create/2
+{ 
+   "doc" : {
+        "name": "Antonio Perez" 
+    }
+}
+```
 ```rest
 POST customer/_update/2/
 { 
@@ -409,11 +418,21 @@ POST customer/_update/2/
 }
 ```
 ```rest
-DELETE customer?pretty'
+DELETE customer?pretty
 ```
 
 ### Trabajando con más datos.
-1. Con el ejemplo account2.json lo introducimos en la pestaña de ES de MachineLearning. inddicando que el nombre del índice sea bank. El formato de los datos será:
+1. Nos descargamos los datos de account2 a una carpeta de nuestro entorno de trabajo:
+```bash
+$ cd 
+$ cd elk-bootcampo
+$ mkdir ejerecicio3
+$ cd ejercicio3
+$ wget "https://raw.githubusercontent.com/antonioalcocer13/elk-bootcamp-esp/python/practica2/accounts2.json"
+```
+
+2. Con el ejemplo account2.json lo introducimos en la pestaña de ES de MachineLearning. inddicando que el nombre del índice sea bank. El formato de los datos será:
+
 ```json
 { 
 "account_number": 0, 

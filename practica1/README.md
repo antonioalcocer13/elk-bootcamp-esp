@@ -7,7 +7,7 @@ La idea de esta práctica es familiarizarse con la herramientas que vamos a usar
 Vamos  famirializarnos con la intalación en un entorno Linux mediante tr.gz
 ### Ejercicio 1: Instalando ES y Kibana
 
-1. Lo primero que vamos a hacer es crear un directorio para el docker compose.
+1. Lo primero que vamos a hacer es crear un directorio para instalar ES en /opt.
 
 ```bash
 $ sudo mkdir /opt/ES
@@ -24,7 +24,7 @@ www.elastic.co/downloads
 $ cd /opt/ES
 $ mv ~/Descargas/elasticsearch-7.9.3-linux-x86_64.tar.gz .
 $ tar -xvzf  elasticsearch-7.9.3-linux-x86_64.tar.gz
-$ ln -s elasticsearch-7.4.2 elastic
+$ ln -s elasticsearch-7.9.3 elastic
 
 $ mv ~/Descargas/kibana-7.9.3-linux-x86_64.tar.gz .
 $ tar -xvzf  kibana-7.9.3-linux-x86_64.tar.gz
@@ -32,6 +32,7 @@ $ ln -s kibana-7.9.3-linux-x86_64 kibana
 ```
 
 3. Modificamos los ficheros de configuración de ES
+Prestad atención a poner VUESTRA IP
 
 ```bash
 $ vim /opt/ES/elastic/config/elasticsearch.yml
@@ -40,8 +41,8 @@ $ vim /opt/ES/elastic/config/elasticsearch.yml
 ```yaml
 cluster.name: MasterBigData
 node.name: Warty Warthog
-path.data: /var/data/ES/elastic1
-path.logs: /var/log/ES/elastic1
+path.data: /var/data/ES/elastic
+path.logs: /var/log/ES/elastic
 network.host: X.X.X.X
 http.port: 9200
 discovery.seed_hosts: ["X.X.X.X"]
@@ -67,8 +68,8 @@ logging.dest: /var/log/ES/kibana
 1. Antes de arrancar los servicios debemos de crear las carpeta de datos y de log y darle permisos para mi usuario, dado que sino, no podrá arrancar:
 
 ```bash
-$ sudo mkdir -P /var/datos/ES/elastic
-$ sudo chown -R mbd. /var/datos/ES/
+$ sudo mkdir -P /var/data/ES/elastic
+$ sudo chown -R mbd. /var/data/ES/
 $ sudo mkdir -P /var/log/ES/elastic
 $ sudo mkdir -P /var/log/ES/kibana
 $ sudo chown -R mbd. /var/log/ES/

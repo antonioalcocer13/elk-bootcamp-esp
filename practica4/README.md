@@ -2,42 +2,17 @@
 
 En esta práctica, vamos a probar a crear term-level queries o filtros para manejar documentos en ElasticSearch. 
 
-## Ejercicio 1. Añadiendo el proyecto
-
-En este apartado vamos a añadir el proyecto a IntelliJ para que sea mucho más fácil trabajar con el código Java.
-
-1. Lo primero que vamos a hacer es chequear que el entorno funciona. Para ello ejecutamos `mvn clean install` desde la carpeta de la práctica. Deberán fallar los tests.
-2. Este comando se descargará las dependencias y compilara el proyecto, el resultado debería ser correcto.
-3. Ahora para limpiar la carpeta ejecutamos `mvn clean`.
-4. Ahora abrimos IntelliJ,
-5. Pulsamos en `Import project`. 
-6. Seleccionamos la carpeta `Practica3`.
-7. Ahora seleccionamos la opción `Import project from external model`.
-8. Seleccionamos `maven` y pulsamos `next`.
-9. Marcamos la casilla `Import Maven projects automatically`.
-10. Pulsamos `next`.
-11. Pulsamos `next`.
-12. Pulsamos `next`.
-13. Pulsamos `finish`.
-14. Ya esta ahora ya tenemos nuestro proyecto importado en IntelliJ. 
-
-## Ejercicio 2. Repaso del código
-
-En este apartado vamos a repasar la dos clases que están incluidas en el repositorio: `Practica4Controller` y `EventController`.
-
-2. La clase `EventController` es una clase Abstracta que contiene las llamadas de ElasticSearch.
-2. La clase `Event` es un clase que representa un evento en el sistema.
-3. La clase `Practica4Controller` es la clase que vamos a implementar.
-4. Esta clase tiene una instancia del cliente de alto nivel.
-
-El objetivo de este proyecto es crear una clase que nos ayude a navegar entre los eventos de un timeline, agrupando esos evento en base a unos tags.
-
-## Ejercicio 3. Creando la función Last()
+## Ejercicio 1. Insertando documentos en ES
 
 La función `last(String id, List<String> tags, int limit, Instant before)` devuelve los últimos n elementos de un timeline concreto que contengan algunos de los tags asignado y que estén antes de una fecha dada. 
 
 Para poder resolver este método vamos a utilizar una función boolean query. La boolean query contiene tres tipos de busqueda:
 
+## Ejercicio 2. Consultando en ES mediante funciones boleanas:
+
+Queremos crear una consulta que nos devuelva los últimos n elementos de un timeline concreto que contengan algunos de los tags asignado y que estén antes de una fecha dada. 
+
+Para poder resolver esta consulta vamos a utilizar una función boolean query. La boolean query contiene tres tipos de busqueda:
 + **Must queries.** Son filtros que el documento **DEBE** cumplir
 + **Should queries.** Son filtros que el documento **DEBERIA** cumplir. Para hacer que al menos una de consulta sea obligatoria tendremos que modificar el parámetro `minimumShouldMatch`.
 + **Must not queries.** Son filtros que el documento **NO DEBE** cumplir, los resultado que pasen este filtro serán excluidos de los resultados. 

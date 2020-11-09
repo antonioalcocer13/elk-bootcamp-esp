@@ -34,6 +34,8 @@ $ ln -s kibana-7.9.3-linux-x86_64 kibana
 3. Modificamos los ficheros de configuración de ES
 Prestad atención a poner VUESTRA IP
 
+Si no estáis acostumbrados a trabajar con vim, se puede usar nano o gedit. El editor con el que se este más cómodo.
+
 ```bash
 $ vim /opt/ES/elastic/config/elasticsearch.yml
 ```
@@ -57,9 +59,9 @@ $ vim /opt/ES/kibana/config/kibana.yml
 ```
 
 ```yaml
-elasticsearch.hosts: ["http://localhost:9200"]
+elasticsearch.hosts: ["http://X.X.X.X:9200"]
 pid.file: /var/data/ES/kibana/run/kibana.pid
-logging.dest: /var/log/ES/kibana
+logging.dest: /var/log/ES/kibana/kibana.log
 ```
 
 
@@ -68,39 +70,73 @@ logging.dest: /var/log/ES/kibana
 1. Antes de arrancar los servicios debemos de crear las carpeta de datos y de log y darle permisos para mi usuario, dado que sino, no podrá arrancar:
 
 ```bash
-$ sudo mkdir -P /var/data/ES/elastic
+$ sudo mkdir -p /var/data/ES/elastic
+$ sudo mkdir -p /var/data/ES/kibana/run
 $ sudo chown -R mbd. /var/data/ES/
-$ sudo mkdir -P /var/log/ES/elastic
-$ sudo mkdir -P /var/log/ES/kibana
+$ sudo mkdir -p /var/log/ES/elastic
+$ sudo mkdir -p /var/log/ES/kibana
 $ sudo chown -R mbd. /var/log/ES/
 ```
 2. Vamos a arrancar ES y Kibana
 
 ```bash
-$ /opt/ES/elastic/bin/elasticsearch -d
+$ /opt/ES/elastic/bin/elasticsearch
 ```
 y en otra terminal
 
 ```bash
-$ nohup /opt/ES/kibana/bin/kibana &
+$ /opt/ES/kibana/bin/kibana
 ```
 
-3. Creamos nuestro entorno de trabajo
+3. Para comprobar que tenemos levantado elastic search, en un navegador podremos introducir:
+
+http://X.X.X.X.9200/_cluster/health?pretty
+
+http://localhost:5601
+
+3a. Si os aparece el mensaje de error: 
+```bash
+vm.max_map_count is too low...
+```
+Es que debéis modificar los parametros del SO para que funcione ES, esto lo podréis realizar ejecutando los siguientes comandos:
+**para cambios temporales**
+
+```bash
+$ ulimit -n 65536
+$ sysctl -w vm.max_map_count=262144
+```
+
+**para cambios persistidos, implica tener que reiniciar máquina**
+
+Modificar el fichero /etc/sysctl.conf
+```conf
+vm.max_map_count=262144
+```
+Y el fichero /etc/security/limits.conf (poner vuestro usuario)
+```conf
+**mbd** - nofile 65536
+```
+
+4. Creamos nuestro entorno de trabajo
 
 ```bash
 $ cd 
 $ mkdir elk-bootcamp
+$ cd elk-bootcamp
 $ mkdir ejercicio2
 $ cd ejercicio2
 ```
 
-3. Para comprobar que funciona correctamente debemos ejecutar el siguiente comando.
+5. Para arrancar como demonio los servicios lo podremos hacer con 
 
 ```bash
-$ http "http://127.0.0.1:9200/_cat/health"
+$ /opt/ES/elastic/bin/elasticsearch -d
+
+$ nohup /opt/ES/kibana/bin/kibana &
 ```
 
 ### Jugando con un dataset de ejemplo
+**(TODOS LOS COMANDOS CURL ESTAN HECHOS PARA LOCALHOST, si has modificado poniendo TU IP, deberás de ponerla)**
 
 1. Primero nos descargamos el dataset de ejemplo.
 

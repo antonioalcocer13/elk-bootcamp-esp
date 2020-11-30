@@ -17,18 +17,18 @@ y nos aseguramos que versión de Java tenemos instalada para cercionarnos que es
 ```bash
 $ java -version
 ```
-2. Nos descargamos la vesrión última de ES y de kibana. En el momento en el que se hizo esta guía es la version 7.9.3. Desde la site de ES:
+2. Nos descargamos la vesrión última de ES y de kibana. En el momento en el que se hizo esta guía es la version 7.10.0. Desde la site de ES:
 www.elastic.co/downloads
-
+En la parte de ElasticSearch y escogéis la opción LINUX_X86_64
 ```bash
 $ cd /opt/ES
-$ mv ~/Descargas/elasticsearch-7.9.3-linux-x86_64.tar.gz .
-$ tar -xvzf  elasticsearch-7.9.3-linux-x86_64.tar.gz
-$ ln -s elasticsearch-7.9.3 elastic
+$ mv ~/Descargas/elasticsearch-7.10.0-linux-x86_64.tar.gz .
+$ tar -xvzf  elasticsearch-7.10.0-linux-x86_64.tar.gz
+$ ln -s elasticsearch-7.10.0 elastic
 
-$ mv ~/Descargas/kibana-7.9.3-linux-x86_64.tar.gz .
-$ tar -xvzf  kibana-7.9.3-linux-x86_64.tar.gz
-$ ln -s kibana-7.9.3-linux-x86_64 kibana
+$ mv ~/Descargas/kibana-7.10.0-linux-x86_64.tar.gz .
+$ tar -xvzf  kibana-7.10.0-linux-x86_64.tar.gz
+$ ln -s kibana-7.10.0-linux-x86_64 kibana
 ```
 
 3. Modificamos los ficheros de configuración de ES
@@ -167,16 +167,30 @@ $ curl -X GET "localhost:9200/bank/_search?q=*&sort=account_number:asc&pretty"
 
 ```bash
 $ curl -X GET "localhost:9200/bank/_search?pretty" -H 'Content-Type: application/json' -d'
-{
-  "query": { "match_all": {} },
-  "sort": [
-	{ "account_number": "asc" }
-  ]
-}'
+  {
+    "query": { "match_all": {} },
+    "sort": [
+  { "account_number": "asc" }
+    ]
+  }'
+  
+
 ```
 ### Ejemplos en Kibana
 Para comprobar que todo esta arrancado deberemos de abrir un navegador y comprobar que la siguiente url está activa:
 http://localhost:5601
+
+1-. Ir a la parte de Stack Monitoring
+¿Cómo se ven los índices existentes?
+
+2-. Ir a la parte de Dev Tools y realizar las mismas consultas que hemos realizado anteriormente.
+
+3-. Ir a la parte de Stack monitoring y activar la monitorización con metricBeats del servidor de ES.  Seguir los pasos de la web.
+Activar la monitorización de elasticsearch, kibana y linux
+
+4-. En kibana visualizar el valor de system.process.memory.size
+
+5-. Ahora  volver a observar los indices que hay creados.
 
 Los logs los podremos observar:
 ```bash

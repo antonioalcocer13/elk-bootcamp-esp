@@ -84,17 +84,18 @@ $ curl -X PUT "localhost:9200/twitter-2" -H 'Content-Type: application/json' -d'
 4. Y si queremos especificar un Mapping Type especifico.
 
 ```bash
-$ curl -X PUT "localhost:9200/test" -H 'Content-Type: application/json' -d'
+curl -X PUT "localhost:9200/test" -H 'Content-Type: application/json' -d'
 {
     "settings" : {
         "number_of_shards" : 1
     },
     "mappings" : {
       "properties" : {
-      	"field1" : { "type" : "text" }
+      "field1" : { "type" : "text" }
       }
     }
 }'
+
 ```
 
 5. Este comando deberemos meterlo en nuestro script de arranque, pero necesitaré un método para comprobar si  un indice existe o no.
@@ -131,12 +132,12 @@ $ curl -X PUT "localhost:9200/twitter/1" -H 'Content-Type: application/json' -d'
     "message" : "trying out Elasticsearch"
 }'
 ```
-
+¿Por que falla? pista: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html
 2. Pero espera nos habíamos cargado el indice. ¿qué ha pasado?
 3. Vale pero hemos creado un documento donde hemos puesto el ID de forma explicita, ahora vamos a probar esto.
 
 ```bash
-$ curl -X POST "localhost:9200/twitter/" -H 'Content-Type: application/json' -d'
+$ curl -X POST "localhost:9200/twitter/_doc" -H 'Content-Type: application/json' -d'
 {
     "user" : "kimchy",
     "post_date" : "2009-11-15T14:12:12",
@@ -160,7 +161,7 @@ Vamos a recuperar los documentos a través de su ID por lo que no haremos consul
 1. Vamos a crear un documento.
 
 ```bash
-$ curl -X PUT "localhost:9200/twitter/0" -H 'Content-Type: application/json' -d'
+$ curl -X PUT "localhost:9200/twitter/_doc/0" -H 'Content-Type: application/json' -d'
 {
     "user" : "kimchy",
     "post_date" : "2009-11-15T14:12:12",
@@ -171,13 +172,13 @@ $ curl -X PUT "localhost:9200/twitter/0" -H 'Content-Type: application/json' -d'
 2. Primero vamos a chequear que nuestro documento exista.
 
 ```bash
-$ curl --HEAD "localhost:9200/twitter/0"
+$ curl --HEAD "localhost:9200/twitter/_doc/0"
 ```
 
 3. Para recuperarlo por su ID vamos a utilizar el siguiente comando.
 
 ```bash
-$ curl -X GET "localhost:9200/twitter/0?pretty"
+$ curl -X GET "localhost:9200/twitter/_doc/0?pretty"
 ```
 
 4. Espera aquí hay más cosas de las que hemos añadido. ¿Para qué sirven todos esto datos?
@@ -190,7 +191,7 @@ Borrar documentos es sencillo en ElasticSearch y no es necesario tener que borra
 1. Esto es muy sencillo solo tenemos que lanzar este comando y borramos el documento seleccionado.
 
 ```bash
-$ curl -X DELETE "localhost:9200/twitter/0"
+$ curl -X DELETE "localhost:9200/twitter/_doc/0"
 ```
 
 2. Pero sí queremos borrar varios documento y pero no queremos borrar el indice, debemos utilizar el borrado por query.
@@ -251,54 +252,57 @@ $ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -
 
 ```bash
 $ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
-{
-    "query": {
-    	"match": {"gender":"F"}
-    }
-}'
+  {
+      "query": {
+      "match": {"gender":"F"}
+      }
+  }'
+
 ```
 
 6. Pregunta: ¿Cuántas mujeres viven en MA or WA?
 
 ```bash
 $ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
-{
-    "query": {
-    	"bool": {
-         	"filter": {
-                "match": {"gender": "f"}
-         	},
-            "should": [
-                {"match": { "state":"WA"}},
-                {"match": { "state":"MA"}}
-             ],
-            "minimum_should_match" : 1
-    	}
-    }
-}'
+  {
+      "query": {
+       "bool": {
+            "filter": {
+                  "match": {"gender": "f"}
+            },
+              "should": [
+                  {"match": { "state":"WA"}},
+                  {"match": { "state":"MA"}}
+               ],
+              "minimum_should_match" : 1
+       }
+      }
+  }'
+
 ```
 
 7. Pregunta: ¿Cuántos hombres tiene un saldo mayor  que 30000$?
 
 ```bash
 $ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
-{
-    "query": {
-    	"bool": {
-         	"must": [{
-                "match": {
-                	"gender": "m"
-                }},
-                {"range": {
-                    "balance": {
-                        "from":30000
-                    }
-                }}
-                ]
-         	}
-         }
-	}    
-}'
+  {
+      "query": {
+       "bool": {
+          "must": [{
+                  "match": {
+                   "gender": "m"
+                  }},
+                  {"range": {
+                      "balance": {
+                          "from":30000
+                      }
+                  }}
+                  ]
+            }
+           }
+   }    
+  }'
+
 ```
 
 
@@ -307,48 +311,56 @@ $ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -
 
 ```bash
 $ curl -X POST "localhost:9200/bank/_delete_by_query" -H 'Content-Type: application/json' -d'
-{
-    "query": {
-    	"bool": {
-         	"must": [{
-                "match": {
-                	"gender": "m"
-                }},
-                {"range": {
-                    "balance": {
-                        "lte":5000
-                    }
-                }
-                }
-                ]
-         	}
-         }
-	}    
-}'
+  {
+      "query": {
+       "bool": {
+            "must": [{
+                  "match": {
+                 "gender": "m"
+                  }},
+                  {"range": {
+                      "balance": {
+                          "lte":5000
+                      }
+                  }
+                  }
+                  ]
+           }
+           }
+   }    
+  }'
+
 ```
 
 9. Pregunta: ¿Cuántas mujeres tienes más de 30 años?
 
 ```bash
 $ curl -X GET "localhost:9200/bank/_count" -H 'Content-Type: application/json' -d'
-{
-    "query": {
-    	"bool": {
-         	"must": [{
-                "match": {
-                	"gender": "f"
-                }},
-                {"range": {
-                    "age": {
-                        "gte":30
-                    }
-                }}
-                ]
-         	}
+  {
+      "query": {
+      "bool": {
+           "must": [{
+                  "match": {
+                   "gender": "f"
+                  }},
+                  {"range": {
+                      "age": {
+                          "gte":30
+                      }
+                  }}
+                  ]
          }
-	}    
-}'
+           }
+   }    
+  '
+
 ```
+10-. Para que las hagáis vosotros:
+a-. ¿Cuántas mujeres del estado de Arkansas tienen mas de 30 años?
+b-. ¿Cuantas mujeres de la ciudad de Nueva York tienen mas de 30000 $?
+c-. ¿Cual es el salario más alto?
+d-. ¿Cuantos hombres hay que tengan más de 50 años con unos ahorros inferiores a 10000$?
+e-. ¿Cúantas cuentas tenemos abiertas en el estado de Massachusetts?
 ## Ejercicio 4. Practicando con ES y Kibana.
 En esta ocasión en lugar de utilizar un terminal, vamos a hacer uso de kibana. Pero por ahora solo lo utilizaremos para poder realizar consultas de una forma "un poco más amigable".
 1. Nos aseguramos que estén levantados los servicios.
@@ -370,7 +382,7 @@ GET _cat/indices?v
 PUT customer?pretty
 GET _cat/indices?v
 ```
-El primer comando me crea un índice llamado “customer”, lo de pretty es para decirle que vamos a interactuar con él por medio de JSON, es decir, que nos devuelva los datos en formato JSON.
+El quinto comando me crea un índice llamado “customer”, lo de pretty es para decirle que vamos a interactuar con él por medio de JSON, es decir, que nos devuelva los datos en formato JSON.
 Crear:
 ```rest
 POST customer/external/1
@@ -389,6 +401,8 @@ PUT customer/_create/1?pretty
 	"name": "John Doe" 
 }
 ```
+También funciona con POST
+
 Recuperar
 ```rest
 GET customer/_doc/1/?pretty
@@ -491,6 +505,8 @@ POST bank/_search?pretty
     "size": 10
 }
 ```
+¿Por qué salen los números de cuenta de la 54 en adelante?
+
 2. resultados qus solo me devuelve dos campos:
 ```rest
 POST bank/_search?pretty
@@ -514,11 +530,11 @@ POST bank/_search?pretty
 }
 ```
 
-No aperece nada, sin embargo si buscamos: 666 Miller Place si que aperece. Si observamos   el mapping, veremos que por defecto nos lo ha puesto que el campo address es de tipo keyword. Lo que significa que debe de coincidir exactamente. Por lo que deberemos de cambiar el mapping. Borramos el indice y generamos el mapping antes de insertar los datos.
+No aperece nada, sin embargo si buscamos: 990 Mill Road si que aperece. Si observamos   el mapping, veremos que por defecto nos lo ha puesto que el campo address es de tipo keyword. Lo que significa que debe de coincidir exactamente. Por lo que deberemos de cambiar el mapping. Borramos el indice y generamos el mapping antes de insertar los datos.
 ```rest
 POST bank/_search?pretty
 { 
-	"query": { "match": { "address": "666 Miller Place" } } 
+	"query": { "match": { "address": "990 Mill Road" } } 
 }
 ```
 5. Borramos el indice para actualizar el mapping correctamente:
@@ -588,14 +604,14 @@ DELETE bank
 ```rest
 POST bank/_search?pretty
 { 
-	"query": { "match": { "address.keyword": "666 Miller Place" } } 
+	"query": { "match": { "address.keyword": "990 Mill Road" } } 
 }
 ```
 y sino, podremos buscar por tipo text y que me devuelva resultados similares:
 ```rest
 POST bank/_search?pretty
 { 
-	"query": { "match": { "address": "666 Miller Place" } } 
+	"query": { "match": { "address": "990 Mill Road" } } 
 }
 ```
 ***¿Por qué hay diferencias entre los dos resultados?***
@@ -714,9 +730,15 @@ SELECT state, COUNT(*) FROM bank GROUP BY state ORDER BY COUNT(*) DESC
 ```
 
 # Ejercicios propuestos.
-1. Pregunta: ¿Cuántas mujeres hay en la empresa?
-2. Pregunta: ¿Cuántas mujeres viven en MA or WA?
-3. Pregunta: ¿Cuántos hombres tiene un saldo mayor que 30000$?
-4. Pregunta: ¿Podemos borrar sólo los hombres por debajo de los 5000$?
-5. Pregunta: ¿Cuántas mujeres tienes más de 30 años?
+1. Pregunta: ¿Cuántas mujeres tienen cuenta que hayan ahorrado más de 30000$?
+2. Pregunta: ¿Cuántas mujeres viven en el estado de Nevada or en el estado de California?
+3. Pregunta: ¿Cuántos hombres tienen cuenta en el estado de Idaho?
+4. Pregunta: ¿Cuántas mujeres se llaman Hattie y viven en el estado de Tennessee? 
+5. Pregunta: ¿Agregar por empresas las cuantas que tenemos contratadas y ordenarlas por orden de clientes?
+
+6-. Hallar el número de clientes que tienen entre 30 y 40 años y que tienen ahorrado entre 30000 y 40000$ para ofrecerles ofertas.
+
+7-. Agregar por cuidades donde tenemos clientes con más de 20000$ ahorrados.
+
+8-. ¿Cuántos clientes son mujeres y/o viven en el estado de california y/o tienen entre 20 y 30 años?
 ## 

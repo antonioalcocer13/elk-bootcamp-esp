@@ -544,7 +544,8 @@ DELETE bank
 6. al crear el indice en machineLearning le ponemos el mapping siguiente:
 ```json
 {
-      "account_number": {
+  "properties": {
+    "account_number": {
         "type": "long"
       },
       "address": {
@@ -597,7 +598,9 @@ DELETE bank
       "state": {
         "type": "keyword"
       }
-    }
+  
+  }
+  }
 ```
 7. Volvemos a hacer las consultas de antes.
 8. Para hacer que se cumpla explícitamente lo que búscamos, iremos al campo .keyword:
